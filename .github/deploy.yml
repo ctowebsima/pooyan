@@ -1,0 +1,38 @@
+name: Deploy Theme via FTP/SFTP
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # مرحله 1: Checkout کد
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # مرحله 2: نصب Node.js (برای اجرای اکشن)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # مرحله 3: دیپلوی با استفاده از FTP/SFTP
+      - name: Deploy theme via FTP/SFTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+        with:
+          # --- تنظیمات احراز هویت ---
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # پروتکل: اگر سرور شما SFTP را پشتیبانی می کند، آن را روی true بگذارید (توصیه می شود). 
+          # در غیر این صورت، آن را حذف کنید یا روی false بگذارید.
+          protocol: ftp 
+          port: 21 # پورت پیش فرض SFTP
+
+          # --- تنظیمات مسیر ---
+          # SOURCE: مسیری در داخل مخزن گیت که می خواهید آپلود شود
+          local-dir: ./
+          # TARGET: مسیری روی سرور که فایل ها باید در آن قرار گیرند
+          server-dir: public_html/testgit/wp-content/themes/websima/
